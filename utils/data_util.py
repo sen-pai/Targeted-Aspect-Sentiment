@@ -79,3 +79,15 @@ def all_aspects_logits(data, aspect2idx):
         if sentiment != "None":
             logit[aspect2idx[aspect]] = 1
     return aspect_logits
+
+
+from torch.nn.utils.rnn import pad_sequence
+
+
+def pad_collate(batch):
+    batch_embedded_text, a, b, c, d = zip(*batch)
+    lens = [x.shape[0] for x in batch_embedded_text]
+
+    batch_embedded_text = pad_sequence(batch_embedded_text, batch_first=True, padding_value=0)
+
+    return batch_embedded_text, lens, a, b, c, d

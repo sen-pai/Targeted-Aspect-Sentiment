@@ -16,10 +16,9 @@ Outputs:
 
 """
 
-def pretrained_embeddings(text, pretrained_model):
+def pretrained_embeddings(text, pretrained_model , tokenizer):
     #takes text as input
     #returns bert embeddings and index of target
-    tokenizer = transformers.BertTokenizer.from_pretrained('bert-base-uncased')
     tokenized = tokenizer.encode(text, add_special_tokens= False)
     input_ids = torch.tensor(tokenized).unsqueeze(0)  # Batch size 1
     outputs = pretrained_model(input_ids)
@@ -29,10 +28,9 @@ def pretrained_embeddings(text, pretrained_model):
 
     return last_hidden_states, target_index
 
-def aspect_embeddings(aspect, pretrained_model):
+def aspect_embeddings(aspect, pretrained_model, tokenizer):
     #takes text as input
     #returns bert embeddings and index of target
-    tokenizer = transformers.BertTokenizer.from_pretrained('bert-base-uncased')
     tokenized = tokenizer.encode(aspect, add_special_tokens= False)
     input_ids = torch.tensor(tokenized).unsqueeze(0)  # Batch size 1
     outputs = pretrained_model(input_ids)
@@ -65,6 +63,7 @@ class SentihoodDataset(Dataset):
         self.condition_on_number = condition_on_number
 
         self.embedding_pretrained_model = transformers.BertModel.from_pretrained('bert-base-uncased')
+        self.tokenizer = transformers.BertTokenizer.from_pretrained('bert-base-uncased')
 
         self.data_dir_path = data_dir_path  # data folder
         os.chdir(self.data_dir_path)
@@ -83,13 +82,13 @@ class SentihoodDataset(Dataset):
 
     def __getitem__(self, i):
         id, text, target, aspect, sentiment = self.data[i]
-        embedded_text, target_index = pretrained_embeddings(text, self.embedding_pretrained_model)
+        embedded_text, target_index = pretrained_embeddings(text, self.embedding_pretrained_model , self.tokenizer)
         sentiment_one_hot = sentiment2onehot(sentiment)
         aspect_logit = self.aspect_logits[i//12]
         #condition of aspect number or aspect embeddings
         if self.condition_on_number:
             c_aspect = aspect2idx[aspect]
         else:
-            c_aspect = aspect_embeddings(aspect,self.embedding_pretrained_model )
+            c_aspect = aspect_embeddings(aspect,self.embedding_pretrained_model, self.tokenizer)
 
-        return embedded_text, target_index, aspect_logit, c_aspect, sentiment_one_hot
+        return embedded_text.squeeze(0), target_index, aspect_logit, c_aspect.squeeze(0), sentiment_one_hot
