@@ -24,6 +24,7 @@ def pretrained_embeddings(text, pretrained_model, tokenizer, target_name):
     input_ids = torch.tensor(tokenized).unsqueeze(0)  # Batch size 1
     outputs = pretrained_model(input_ids)
     last_hidden_states = outputs[0]
+    # print(last_hidden_states.shape)
     # encoded LOCATION = 3295
     if "1" in target_name:
         entity = 2487
@@ -70,6 +71,10 @@ class SentihoodDataset(Dataset):
             "bert-base-uncased"
         )
         self.tokenizer = transformers.BertTokenizer.from_pretrained("bert-base-uncased")
+
+        # self.embedding_pretrained_model = transformers.AlbertModel.from_pretrained("albert-base-v2")
+        # self.tokenizer = transformers.AlbertTokenizer.from_pretrained("albert-base-v2")
+        # print(self.tokenizer.encode("LOCATION1", add_special_tokens=False))
 
         self.data_dir_path = data_dir_path  # data folder
         os.chdir(self.data_dir_path)

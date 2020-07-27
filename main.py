@@ -52,8 +52,8 @@ valid_dataset = SentihoodDataset(
 
 
 accumulation_steps = 10
-batch_size = 5
-val_batch_size = 1
+batch_size = 10
+val_batch_size = 20
 dataloaders = {
     "train": DataLoader(
         train_dataset, batch_size=batch_size, shuffle=True, num_workers=0, collate_fn=pad_collate
@@ -190,7 +190,7 @@ def train_model(model, optimizer, num_epochs=25):
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = LSTMModel(768, 100, 0.0, device, 768).to(device)
+model = LSTMModel(128, 100, 0.0, device, 128).to(device)
 
 # initialize weights
 for name, param in model.named_parameters():
