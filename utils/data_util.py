@@ -11,6 +11,7 @@ import xml.etree.ElementTree
 
 # import nltk
 import numpy as np
+import torch
 
 
 def parse_sentihood_json(in_file):
@@ -90,4 +91,4 @@ def pad_collate(batch):
 
     batch_embedded_text = pad_sequence(batch_embedded_text, batch_first=True, padding_value=0)
 
-    return batch_embedded_text, lens, a, b, c, d
+    return batch_embedded_text, torch.tensor(lens, dtype=torch.float), a, b, c, d
