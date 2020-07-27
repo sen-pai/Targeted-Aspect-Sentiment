@@ -97,11 +97,9 @@ class SentihoodDataset(Dataset):
         if self.condition_on_number:
             c_aspect = aspect2idx[aspect]
         else:
-            c_aspect = (
-                aspect_embeddings(aspect, self.embedding_pretrained_model, self.tokenizer)
-                .squeeze(0)[0]
-                .unsqueeze(0)
-            )
+            c_aspect = aspect_embeddings(
+                aspect, self.embedding_pretrained_model, self.tokenizer
+            ).squeeze(0)[0]
             # print(c_aspect.shape)
 
         return (
