@@ -61,8 +61,6 @@ class SentihoodDataset(Dataset):
     def __init__(
         self, data_dir_path, dataset_type="train", transform=None, condition_on_number=True,
     ):
-        # try to change back here everytime
-        # self.current_path = os.getcwd()
         self.dataset_type = dataset_type
         self.transform = transform
         self.condition_on_number = condition_on_number
@@ -74,7 +72,6 @@ class SentihoodDataset(Dataset):
 
         # self.embedding_pretrained_model = transformers.AlbertModel.from_pretrained("albert-base-v2")
         # self.tokenizer = transformers.AlbertTokenizer.from_pretrained("albert-base-v2")
-        # print(self.tokenizer.encode("LOCATION1", add_special_tokens=False))
 
         self.data_dir_path = data_dir_path  # data folder
         os.chdir(self.data_dir_path)
@@ -98,7 +95,8 @@ class SentihoodDataset(Dataset):
         )
         sentiment_one_hot = sentiment2onehot(sentiment)
         aspect_logit = self.aspect_logits[i // 12]
-        # condition of aspect number or aspect embeddings
+
+        # condition on aspect number or aspect embeddings
         if self.condition_on_number:
             c_aspect = aspect2idx[aspect]
         else:
